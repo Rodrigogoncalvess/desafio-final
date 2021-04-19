@@ -3,6 +3,7 @@ package com.rodrigo.desafiojava.controller;
 
 import com.rodrigo.desafiojava.Utilty.JWTUtility;
 import com.rodrigo.desafiojava.domain.JwtRequest;
+import com.rodrigo.desafiojava.domain.Phones;
 import com.rodrigo.desafiojava.domain.User;
 import com.rodrigo.desafiojava.exceptionhandler.ReplyMessage;
 import com.rodrigo.desafiojava.repository.UserRepository;
@@ -15,10 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -47,7 +45,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(user));
         }
 
-        return ResponseEntity.badRequest().body(new ReplyMessage("Usuario ja existe"));
+        return ResponseEntity.badRequest().body(new ReplyMessage("Usuário já existe"));
 
     }
 
@@ -68,23 +66,29 @@ public class UserController {
     }
 
 
-    @GetMapping
-    private List<User> getall() {
+    @GetMapping("/getall")
+    private List<?> getall() {
         return userRepository.findAll();
     }
 
-    @PutMapping("/{update}")
-    private ResponseEntity<User> update(@RequestBody User user) {
+    @PutMapping("/update")
+    private ResponseEntity<?> updateUser(@Valid @RequestBody User user, Phones phones) throws Exception {
         Optional<User> updateUser = userRepository.findByToken(user.getToken());
-        if (updateUser.isPresent()) {
-            updateUser.get().setPhones(user.getPhones());
-            updateUser.get().setModified(new Date());
-            userRepository.save(updateUser.get());
 
-            return new ResponseEntity<User>(updateUser.get(), HttpStatus.OK);
+        if (!userRepository.existsById(user.getUuid())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ReplyMessage("UUID não existe"));
+
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        phones.setNumber(phones.getNumber());
+        phones.setDdd(phones.getDdd());
+        user.setModified(new Date());
+
+        userRepository.save(user);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+
 
     @DeleteMapping("/{uuid}")
     private ResponseEntity<?> delete(@PathVariable("uuid") UUID uuid) {

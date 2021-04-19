@@ -5,7 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -17,11 +17,5 @@ public class Phones {
     private String ddd;
     private String number;
 
-    public String getDdd() {
-        return ddd;
-    }
 
-    public String getNumber() {
-        return number;
-    }
 }

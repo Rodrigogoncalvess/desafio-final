@@ -36,7 +36,7 @@ public class User implements UserDetails {
     @Size(max = 80)
     private String name;
 
-    @NotBlank
+
     @Email
     private String email;
 
@@ -45,12 +45,12 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Phones> phones;
 
+    @JsonFormat(pattern = "dd-MMM-yyyy HH:mm:ss")
+    private Date created = new Date() ;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime created = LocalDateTime.now();
+    private Date modified;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private Date modified = new Date();
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private Date last_login = new Date();
+    private LocalDateTime last_login = LocalDateTime.now();
 
     private String token;
 

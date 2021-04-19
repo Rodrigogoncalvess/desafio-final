@@ -17,7 +17,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,25 +29,28 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(generator = "system-uuid", strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)")
     private UUID uuid;
 
     @NotBlank
     @Size(max = 80)
     private String name;
 
-
+    @NotBlank
     @Email
     private String email;
 
+    @NotBlank
     private String password;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private List<Phones> phones;
 
-    @JsonFormat(pattern = "dd-MMM-yyyy HH:mm:ss")
-    private Date created = new Date() ;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private Date modified;
+    private LocalDateTime created = LocalDateTime.now();
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime modified= LocalDateTime.now();
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime last_login = LocalDateTime.now();
 
@@ -58,6 +60,7 @@ public class User implements UserDetails {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         this.password = passwordEncoder.encode(this.password);
     }
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -94,7 +97,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    }
+}
 
 
 
